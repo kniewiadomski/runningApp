@@ -1,0 +1,128 @@
+<!DOCTYPE HTML>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<title>Trainings</title>
+<meta charset="utf-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<!-- Bootstrap CSS -->
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+	integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+	crossorigin="anonymous">
+	
+	
+
+</head>
+
+<body>
+
+	<div class="container">
+		<h3>Training Directory</h3>
+		<hr>
+		
+		<nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+			<a class="navbar-brand" href="#">RunApp</a>
+			<button class="navbar-toggler" type="button" data-toggle="collapse"
+				data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown"
+				aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarNavDropdown">
+				<ul class="navbar-nav">
+					<li class="nav-item"><a class="nav-link"
+						href="/trainings/plan">Plan <span class="sr-only"></span></a></li>
+					<li class="nav-item"><a class="nav-link"
+						href="/trainings/history">Historia</a></li>
+					<li class="nav-item"><a class="nav-link" href="/goals/list">Cele</a>
+					<li class="nav-item"><a class="nav-link"
+						href="/series">Serie<span class="sr-only"></span></a></li>
+					</li>
+					<li class="nav-item dropdown"><a
+						class="nav-link dropdown-toggle" href="#"
+						id="navbarDropdownMenuLink" role="button" data-toggle="dropdown"
+						aria-haspopup="true" aria-expanded="false"> Statystyki </a>
+						<div class="dropdown-menu"
+							aria-labelledby="navbarDropdownMenuLink">
+							<a class="dropdown-item" href="/statistics/main">Ogólne</a> <a
+								class="dropdown-item" href="/statistics/annual">Zestawienia
+								roczne</a> <a class="dropdown-item" href="/statistics/monthly">Zestawienia
+								miesięczne</a> <a class="dropdown-item" href="/statistics/records">Rekordy</a>
+						</div></li>
+				</ul>
+			</div>
+		</nav>
+
+		<table class="table table-dark table-striped table-hover">
+			<!--<thead class="thead-dark">
+			<tr>
+				<th>Name</th>
+				<th>Date</th>
+				<th>Distance</th>
+				<th>Comment</th>
+				<th>Action</th>
+			</tr>
+		</thead>-->
+
+			<tbody>
+				<tr>
+					<td><b>Nazwa</b></td>
+					<td th:text="${training.name}" />
+				</tr>
+				<tr>
+					<td><b>Data</b></td>
+					<td th:text="${#dates.format(training.date, 'yyyy-MM-dd')}" />
+				</tr>
+				<tr>
+					<td><b>Seria</b></td>
+					<td th:text="${training.series != null} ? ${training.series.name} : '-'" />
+				</tr>
+				<tr>
+					<td><b>Typ</b></td>
+					<td th:text="${training.details.type.displayValue}"/>
+				</tr>
+				<tr>
+					<td><b>Dystans</b></td>
+					<span th:if="${training.details.type == T(pl.kniewiadomski.runningApp.enums.TrainingType).DISTANCE_INTERVAL}">
+						<td th:text="${training.details.fastDistance} + ' / ' + ${training.details.recoverDistance} + '             x' + ${training.details.intervalQuantity}"/>
+					</span>
+					<span th:if="${training.details.type == T(pl.kniewiadomski.runningApp.enums.TrainingType).CONSTANT}">
+						<td th:text="${training.details.distance != null} ? ${training.details.distance} : '-'"/>
+					</span>
+					<span th:if="${training.details.type == T(pl.kniewiadomski.runningApp.enums.TrainingType).TIME_INTERVAL}">
+						<td> - </td>
+					</span>
+				</tr>
+				<tr>
+					<td><b>Zakres pulsu</b></td>
+					<td>
+						<span th:if="${training.details.minHr != null and training.details.maxHr != null}"><p th:text="${training.details.minHr + ' - ' + training.details.maxHr}"></p></span>
+						<span th:if="${training.details.minHr == null and training.details.maxHr != null}"><p th:text="${'do ' + training.details.maxHr}"></p></span>
+						<span th:if="${training.details.minHr != null and training.details.maxHr == null}"><p th:text="${'powyżej ' + training.details.minHr}"></p></span>
+						<span th:if="${training.details.minHr == null and training.details.maxHr == null}"><p th:text="${' - '}"></p></span>
+					</td>
+				</tr>
+				<tr>
+					<td><b>Czas</b></td>
+					<span th:if="${training.details.type != T(pl.kniewiadomski.runningApp.enums.TrainingType).TIME_INTERVAL}">
+						<td th:text="${training.details.time != null} ? ${training.details.time} : '-'" />
+					</span>
+					<span th:if="${training.details.type == T(pl.kniewiadomski.runningApp.enums.TrainingType).TIME_INTERVAL}">
+						<td th:text="${training.details.fastTime} + ' / ' + ${training.details.recoverTime} + '    x' + ${training.details.intervalQuantity}"/>
+					</span>
+				</tr>
+			</tbody>
+		</table>
+		<a th:href="@{/trainings/updatePlannedTraining(trainingId=${training.id})}" class="btn btn-info btn-sm">
+			Aktualizuj
+		</a> 
+		<a th:href="@{/trainings/delete(trainingId=${training.id})}" class="btn btn-danger btn-sm" onclick="if(!(confirm('Czy na pewno chcesz usunąć ten trening?'))) return false">
+			Usuń 
+		</a> </br>
+		<a th:href="@{/trainings/plan}">Wróć do listy treningów</a>
+	</div>
+</body>
+
+</html>

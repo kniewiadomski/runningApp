@@ -1,0 +1,133 @@
+<!DOCTYPE HTML>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<title>Trainings</title>
+<meta charset="utf-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<!-- Bootstrap CSS -->
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+	integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+	crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+	integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+	crossorigin="anonymous"></script>
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+	integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+	crossorigin="anonymous"></script>
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+	integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+	crossorigin="anonymous"></script>
+</head>
+
+<body>
+
+	<div class="container">
+		<h3>Training Directory</h3>
+		<hr>
+
+		<nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+			<a class="navbar-brand" href="#">RunApp</a>
+			<button class="navbar-toggler" type="button" data-toggle="collapse"
+				data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown"
+				aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarNavDropdown">
+				<ul class="navbar-nav">
+					<li class="nav-item"><a class="nav-link"
+						href="/trainings/plan">Plan <span class="sr-only"></span></a></li>
+					<li class="nav-item"><a class="nav-link"
+						href="/trainings/history">Historia</a></li>
+					<li class="nav-item"><a class="nav-link" href="/goals/list">Cele</a>
+					<li class="nav-item"><a class="nav-link" href="/series">Serie<span
+							class="sr-only"></span></a></li>
+					</li>
+					<li class="nav-item dropdown"><a
+						class="nav-link dropdown-toggle" href="#"
+						id="navbarDropdownMenuLink" role="button" data-toggle="dropdown"
+						aria-haspopup="true" aria-expanded="false"> Statystyki </a>
+						<div class="dropdown-menu"
+							aria-labelledby="navbarDropdownMenuLink">
+							<a class="dropdown-item" href="/statistics/main">Ogólne</a> <a
+								class="dropdown-item" href="/statistics/annual">Zestawienia
+								roczne</a> <a class="dropdown-item" href="/statistics/monthly">Zestawienia
+								miesięczne</a> <a class="dropdown-item" href="/statistics/records">Rekordy</a>
+						</div></li>
+				</ul>
+				<ul class="navbar-nav navbar-right">
+				<li>
+				<form class="form-inline my-2 my-lg-0" method="POST" th:action="@{/logout}">
+					<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Wyloguj</button>
+				</form>
+				</li>
+				</ul>
+			</div>
+		</nav>
+
+		<div class="collapse" id="collapseForm">
+			<form action="#" th:action="@{/trainings/filterPlan}"
+				th:object="${filter}" method="POST">
+
+
+				<div class="form-group">
+					<label for="typeSelect">Seria treningu</label> <select
+						id="typeSelect" th:field="*{series}" name="series"
+						class="form-control col-4" onchange="changeType()">
+						<option value=0>Dowolna</option>
+						<option th:each="series : ${seriesList}"
+							th:value="${series.getId()}" th:text="${series.getName()}"></option>
+					</select>
+				</div>
+				<div class="form-row">
+					<div class="form-group">
+						<label for="dateInput">Data od</label> <input id="dateInput"
+							type="date" th:field="*{dateFrom}" class="form-control col-10">
+					</div>
+					<div class="form-group">
+						<label for="dateInput">Data do</label> <input id="dateInput"
+							type="date" th:field="*{dateTo}" class="form-control col-10">
+					</div>
+				</div>
+				<button type="submit" class="btn btn-info col-2">Filtruj</button>
+			</form>
+
+			<hr>
+		</div>
+
+		<a th:href="@{/trainings/showFormForAdd}"
+			class="btn btn-primary btn-sm mb-3"> Dodaj Trening </a> <a
+			class="btn btn-primary btn-sm mb-3" data-toggle="collapse"
+			href="#collapseForm" role="button" aria-expanded="false"
+			onclick="changeState(this)"> Pokaż filtr </a>
+		<table class="table table-bordered table-striped">
+			<thead class="thead-dark">
+				<tr>
+					<th>Name</th>
+					<th>Date</th>
+					<th>Action</th>
+				</tr>
+			</thead>
+
+			<tbody>
+				<tr th:each="tempTraining : ${trainings}">
+					<td th:text="${tempTraining.name}" />
+					<td th:text="${#dates.format(tempTraining.date, 'yyyy-MM-dd')}" />
+					<td><a
+						th:href="@{/trainings/showDetails(trainingId=${tempTraining.id})}"
+						class="btn btn-success btn-sm"> Szczegóły </a> <a
+						th:href="@{/trainings/submitTraining(trainingId=${tempTraining.id})}"
+						class="btn btn-primary btn-sm"> Wykonaj </a></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<script type="text/javascript" th:src="@{/js/filter.js}"></script>
+</body>
+
+</html>
