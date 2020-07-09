@@ -1,0 +1,160 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1" />
+<!-- Bootstrap CSS + JS-->
+
+<link th:href="@{/css/stats.css}" rel="stylesheet" />
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+	integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+	crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+	integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+	crossorigin="anonymous"></script>
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+	integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+	crossorigin="anonymous"></script>
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+	integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+	crossorigin="anonymous"></script>
+
+</head>
+<body style="text-align: center;">
+	<div class="container" style="padding-top: 120px;">
+		<nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+			<a class="navbar-brand" href="#">RunApp</a>
+			<button class="navbar-toggler" type="button" data-toggle="collapse"
+				data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown"
+				aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarNavDropdown">
+				<ul class="navbar-nav">
+					<li class="nav-item"><a class="nav-link"
+						href="/trainings/plan">Plan <span class="sr-only"></span></a></li>
+					<li class="nav-item"><a class="nav-link"
+						href="/trainings/history">Historia</a></li>
+					<li class="nav-item"><a class="nav-link" href="/goals/list">Cele</a>
+					<li class="nav-item"><a class="nav-link" href="/series">Serie<span
+							class="sr-only"></span></a></li>
+					</li>
+					<li class="nav-item dropdown"><a
+						class="nav-link dropdown-toggle" href="#"
+						id="navbarDropdownMenuLink" role="button" data-toggle="dropdown"
+						aria-haspopup="true" aria-expanded="false"> Statystyki </a>
+						<div class="dropdown-menu"
+							aria-labelledby="navbarDropdownMenuLink">
+							<a class="dropdown-item" href="/statistics/main">Ogólne</a> <a
+								class="dropdown-item" href="/statistics/annual">Zestawienia
+								roczne</a> <a class="dropdown-item" href="/statistics/monthly">Zestawienia
+								miesięczne</a> <a class="dropdown-item" href="/statistics/records">Rekordy</a>
+						</div></li>
+				</ul>
+			</div>
+		</nav>
+		<div id="countChart"
+			style="width: 550px; height: 400px; margin: 0 auto"></div>
+		<div id="totalDistance"
+			style="width: 550px; height: 400px; margin: 0 auto"></div>
+
+	</div>
+	<script
+		src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<script
+		src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="https://code.highcharts.com/highcharts.js"></script>
+	<script src="https://code.highcharts.com/modules/exporting.js"></script>
+
+	<script th:inline="javascript">
+    $(function(){
+    Highcharts.chart('countChart', {
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Zestawienie roczne - ilość'
+        },
+        subtitle: {
+            text: 'Ilość treningów wykonana w danych latach'
+        },
+        xAxis: {
+            categories: [[${counter.keySet()}]],
+            crosshair: true
+        },
+        yAxis: {
+        	allowDecimals: false,
+            min: 0,
+            max:10,
+            title: {
+                text: 'Ilość treningów'
+            }
+        },
+        tooltip: {
+            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+            pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+            '<td style="padding:0"><b> {point.y} treningów</b></td></tr>',
+            footerFormat: '</table>',
+            shared: true,
+            useHTML: true
+        },
+        plotOptions: {
+            column: {
+                pointPadding: 0.2,
+                borderWidth: 0
+            }
+        },
+        series: [{
+            name: 'Rok',
+            data: [[${counter.values()}]]
+        }]
+    });
+    Highcharts.chart('totalDistance', {
+        chart: {
+            type: 'line'
+        },
+        title: {
+            text: 'Zestawienie roczne - dystans'
+        },
+        subtitle: {
+            text: 'Dystans przebiegnięty w danych latach'
+        },
+        xAxis: {
+        	
+            categories: [[${totalDistance.keySet()}]],
+            crosshair: true
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: 'Przebiegnięte km'
+            }
+        },
+        tooltip: {
+            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+            pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+            '<td style="padding:0"><b> {point.y} km</b></td></tr>',
+            footerFormat: '</table>',
+            shared: true,
+            useHTML: true
+        },
+        plotOptions: {
+            column: {
+                pointPadding: 0.2,
+                borderWidth: 0
+            }
+        },
+        series: [{
+            name: 'Rok',
+            data: [[${totalDistance.values()}]]
+        }]
+    });
+    });
+   </script>
+
+</body>
+</html>
+
